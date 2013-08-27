@@ -28,7 +28,13 @@ module PgSearch
     def regular_columns
       return [] unless options[:against]
       Array(options[:against]).map do |column_name, weight|
-        Column.new(column_name, weight, model)
+        # TODO: of any use?
+        if model.translated? column_name
+          translation_model = "#{model.name}::Translation".constantize
+          Column.new(column_name, weight, translation_model)
+        else
+          Column.new(column_name, weight, model)
+        end
       end
     end
 

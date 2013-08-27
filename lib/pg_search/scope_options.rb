@@ -50,9 +50,12 @@ module PgSearch
 
     def joins
       if config.associations.any?
+        # TODO: join the translation table here as well...
         config.associations.map do |association|
           association.join(primary_key)
         end.join(' ')
+      else
+        "INNER JOIN #{@model.name.underscore}_translations ON #{@model.name.underscore}_translations.#{@model.name.underscore}_id = #{@model.name.underscore.pluralize}.id AND #{@model.name.underscore}_translations.locale = '#{I18n.locale}'"
       end
     end
 
