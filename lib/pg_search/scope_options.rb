@@ -55,7 +55,9 @@ module PgSearch
           association.join(primary_key)
         end.join(' ')
       else
-        "INNER JOIN #{@model.name.underscore}_translations ON #{@model.name.underscore}_translations.#{@model.name.underscore}_id = #{@model.name.underscore.pluralize}.id AND #{@model.name.underscore}_translations.locale = '#{I18n.locale}'"
+        if @model.respond_to? :translations
+          "INNER JOIN #{@model.name.underscore}_translations ON #{@model.name.underscore}_translations.#{@model.name.underscore}_id = #{@model.name.underscore.pluralize}.id AND #{@model.name.underscore}_translations.locale = '#{I18n.locale}'"
+        end
       end
     end
 
