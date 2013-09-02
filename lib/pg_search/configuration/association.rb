@@ -50,7 +50,7 @@ module PgSearch
 
       def relation(primary_key)
         query = @model.unscoped.joins(@name).select("#{primary_key} AS id, #{selects}").group(primary_key)
-        if @model.respond_to? :translated?
+        if @model.respond_to? :translation_class
           # NOTE: needs an outer join here to also find untranslated models
           prefix = @model.name.underscore
           query = query.joins "LEFT OUTER JOIN #{prefix}_translations ON #{@model.table_name}.id = #{prefix}_translations.#{prefix}_id"
