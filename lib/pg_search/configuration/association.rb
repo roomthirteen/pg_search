@@ -9,7 +9,15 @@ module PgSearch
         @model = model
         @name = name
         @columns = Array(column_names).map do |column_name, weight|
-          ForeignColumn.new(column_name, weight, @model, self)
+
+          if model.respond_to?(:translated?) && model.translated?(column_name)
+            translation_model = "#{model.name}::Translation".constantize
+            ForeignColumn.new(column_name, weight, translation_model, self)
+          else
+            ForeignColumn.new(column_name, weight, @model, self)
+          end
+
+
         end
       end
 
@@ -41,7 +49,11 @@ module PgSearch
       end
 
       def relation(primary_key)
-        @model.unscoped.joins(@name).select("#{primary_key} AS id, #{selects}").group(primary_key)
+        query = @model.unscoped.joins(@name).select("#{primary_key} AS id, #{selects}").group(primary_key)
+        if @model.respond_to? :translated?
+          query = query.joins :translations
+        end
+        query
       end
     end
   end

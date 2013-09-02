@@ -29,7 +29,7 @@ module PgSearch
       return [] unless options[:against]
       Array(options[:against]).map do |column_name, weight|
         # TODO: of any use?
-        if model.translated? column_name
+        if model.respond_to?(:translated?) && model.translated?(column_name)
           translation_model = "#{model.name}::Translation".constantize
           Column.new(column_name, weight, translation_model)
         else

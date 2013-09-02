@@ -21,7 +21,7 @@ module PgSearch
       end
 
       def table_name
-        @connection.quote_table_name(@association.table_name)
+        @connection.quote_table_name(@model.table_name)
       end
     end
   end
