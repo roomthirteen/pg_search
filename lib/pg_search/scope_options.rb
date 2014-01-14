@@ -56,7 +56,11 @@ module PgSearch
       end
 
       if @model.respond_to? :translation_class
-        join_items << "INNER JOIN #{@model.name.underscore}_translations ON #{@model.name.underscore}_translations.#{@model.name.underscore}_id = #{@model.name.underscore.pluralize}.id AND #{@model.name.underscore}_translations.locale = '#{I18n.locale}'"
+        # event_translations
+        translation_table = @model.translation_class.quoted_table_name
+        # event_translations.id
+        translation_primary_key = "#{translation_table}.#{connection.quote_column_name(@model.translation_class.primary_key)}"
+        join_items << "INNER JOIN #{translation_table} ON #{translation_primary_key} = #{primary_key} AND #{translation_table}.locale = '#{I18n.locale}'"
       end
 
       join_items.join ' '
